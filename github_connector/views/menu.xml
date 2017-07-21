@@ -65,24 +65,14 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         sequence="40"
         name="Reports"/>
 
-    <menuitem id="menu_github_reporting"
-        sequence="10"
+    <menuitem id="menu_branch_by_milestone"
         parent="menu_reporting"
-        name="Github"/>
+        sequence="1"
+        action="action_github_branch_by_milestone"/>
 
-    <menuitem id="menu_branch_by_serie"
-        parent="menu_github_reporting"
-        sequence="3"
-        action="action_github_branch_by_serie"/>
-
-    <menuitem id="menu_size_by_serie"
-        parent="menu_github_reporting"
-        sequence="4"
-        action="action_github_size_by_serie"/>
-
-    <menuitem id="menu_git_reporting"
+    <menuitem id="menu_size_by_milestone"
         parent="menu_reporting"
-        sequence="11"
-        name="Git"/>
+        sequence="2"
+        action="action_github_size_by_milestone"/>
 
 </odoo>

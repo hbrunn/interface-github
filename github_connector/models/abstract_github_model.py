@@ -6,7 +6,6 @@
 import base64
 import urllib
 import logging
-from datetime import datetime
 
 from openerp import tools, api, fields, models, exceptions, _
 from .github import Github
@@ -25,9 +24,10 @@ class AbtractGithubModel(models.AbstractModel):
     _github_type = None
     _github_login_field = None
     _need_individual_call = False
+    _field_list_prevent_overwrite = []
 
-    github_id = fields.Char(
-        string='Github Id', readonly=True, index=True)
+    github_id_external = fields.Char(
+        string='Github Id', readonly=True, index=True, oldname='github_id')
 
     github_login = fields.Char(
         string='Github Technical Name', readonly=True, index=True)
@@ -64,13 +64,12 @@ class AbtractGithubModel(models.AbstractModel):
     @api.model
     def get_odoo_data_from_github(self, data):
         return {
-            'github_id': data['id'],
+            'github_id_external': data['id'],
             'github_url': data.get('html_url', False),
             'github_login': data.get(self.github_login_field(), False),
             'github_create_date': data.get('created_at', False),
             'github_write_date': data.get('updated_at', False),
-            'github_last_sync_date':
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'github_last_sync_date': fields.Datetime.now(),
         }
 
     @api.multi
@@ -94,7 +93,8 @@ class AbtractGithubModel(models.AbstractModel):
         extra_data = extra_data and extra_data or {}
 
         # We try to search object by id
-        existing_object = self.search([('github_id', '=', data['id'])])
+        existing_object = self.search(
+            [('github_id_external', '=', data['id'])])
         if existing_object:
             return existing_object
 
@@ -104,7 +104,7 @@ class AbtractGithubModel(models.AbstractModel):
                 ('github_login', '=', data[self._github_login_field])])
             if existing_object:
                 # Update the existing object with the id
-                existing_object.github_id = data['id']
+                existing_object.github_id_external = data['id']
                 _logger.info(
                     "Existing object %s#%d with github name '%s' has been"
                     " updated with unique github id %s#%s" % (
@@ -134,7 +134,7 @@ class AbtractGithubModel(models.AbstractModel):
         github_model = self.get_github_for(self.github_type())
         res = github_model.get([name])
         # search if ID doesn't exist in database
-        current_object = self.search([('github_id', '=', res['id'])])
+        current_object = self.search([('github_id_external', '=', res['id'])])
         if not current_object:
             # Create the object
             return self._create_from_github_data(res)
@@ -158,11 +158,11 @@ class AbtractGithubModel(models.AbstractModel):
         """
         github_model = self.get_github_for(self.github_type())
         for item in self:
-            if item._model._name == 'github.organization':
+            if item._name == 'github.organization':
                 # Github doesn't provides api to load an organization by id
                 res = github_model.get([item.github_login])
             else:
-                res = github_model.get([item.github_id], by_id=True)
+                res = github_model.get([item.github_id_external], by_id=True)
             item._update_from_github_data(res)
         if child_update:
             self.full_update()
@@ -197,9 +197,14 @@ class AbtractGithubModel(models.AbstractModel):
             # process, we realize a write only if data changed
             to_write = {}
             for k, v in vals.iteritems():
-                # TODO : improve, this line raise a warning on many2one
-                # comparison "Comparing apples and oranges..."
-                if item[k] != v:
+                if hasattr(item[k], 'id'):
+                    to_compare = item[k].id
+                else:
+                    to_compare = item[k]
+                # do not overwrite existint value for some given fields
+                if to_compare != v and (
+                        k not in self._field_list_prevent_overwrite or
+                        to_compare is False):
                     to_write[k] = v
             if to_write:
                 item.write(to_write)
@@ -208,7 +213,7 @@ class AbtractGithubModel(models.AbstractModel):
     def get_github_for(self, github_type):
         if (not tools.config.get('github_login') or
                 not tools.config.get('github_password')):
-            raise exceptions.Warning(_("Configuration Error"), _(
+            raise exceptions.Warning(_(
                 "Please add 'github_login' and 'github_password' "
                 "in Odoo configuration file."))
         return Github(

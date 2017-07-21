@@ -6,7 +6,7 @@
 {
     'name': 'Github Connector',
     'summary': 'Recover information from github repositories',
-    'version': '8.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'Connector',
     'license': 'AGPL-3',
     'author':
@@ -32,12 +32,13 @@
         'views/view_github_repository.xml',
         'views/view_github_repository_branch.xml',
         'views/view_github_team.xml',
+        'views/view_github_team_membership.xml',
         'views/menu.xml',
     ],
     'demo': [
         'demo/res_groups.xml',
         'demo/github_organization.xml',
-        'demo/github_organization_serie.xml',
+        'demo/github_organization_milestone.xml',
     ],
     'installable': True,
     'external_dependencies': {

@@ -22,22 +22,45 @@ class GithubTeam(models.Model):
     name = fields.Char(
         string='Name', index=True, required=True, readonly=True)
 
-    member_ids = fields.Many2many(
-        string='Members', comodel_name='res.partner',
-        relation='github_team_partner_rel', column1='team_id',
-        column2='partner_id', readonly=True)
+    membership_ids = fields.One2many(
+        string='Members', comodel_name='github.team.membership',
+        inverse_name='team_id', readonly=True)
 
-    member_qty = fields.Integer(
-        string='Members Quantity', compute='_compute_member_qty', store=True)
+    membership_qty = fields.Integer(
+        string='Members Quantity', compute='_compute_membership_qty',
+        store=True)
 
     description = fields.Char(string='Description', readonly=True)
 
+    complete_name = fields.Char(
+        string='Complete Name', readonly=True,
+        compute='_compute_complete_name', store=True)
+
+    github_url = fields.Char(
+        string='Github URL', compute='_compute_github_url', readonly=True)
+
     # Compute Section
     @api.multi
-    @api.depends('member_ids', 'member_ids.team_ids')
-    def _compute_member_qty(self):
+    @api.depends('github_login', 'organization_id.github_login')
+    def _compute_github_url(self):
         for team in self:
-            team.member_qty = len(team.member_ids)
+            team.github_url = "https://github.com/orgs/{organization_name}/"\
+                "teams/{team_name}".format(
+                    organization_name=team.organization_id.github_login,
+                    team_name=team.github_login)
+
+    @api.multi
+    @api.depends('name', 'organization_id.github_login')
+    def _compute_complete_name(self):
+        for team in self:
+            team.complete_name =\
+                team.organization_id.github_login + '/' + team.github_login
+
+    @api.multi
+    @api.depends('membership_ids')
+    def _compute_membership_qty(self):
+        for team in self:
+            team.membership_qty = len(team.membership_ids)
 
     # Overloadable Section
     def get_odoo_data_from_github(self, data):
@@ -56,10 +79,18 @@ class GithubTeam(models.Model):
     @api.multi
     def button_sync_member(self):
         partner_obj = self.env['res.partner']
-        github_member = self.get_github_for('team_members')
+        connector_member = self.get_github_for('team_members_member')
+        connector_maintainer = self.get_github_for('team_members_maintainer')
         for team in self:
-            member_ids = []
-            for data in github_member.list([team.github_id]):
+            membership_data = []
+            for data in connector_member.list([team.github_id_external]):
                 partner = partner_obj.get_from_id_or_create(data)
-                member_ids.append(partner.id)
-            team.member_ids = member_ids
+                membership_data.append(
+                    {'partner_id': partner.id, 'role': 'member'})
+            for data in connector_maintainer.list([team.github_id_external]):
+                partner = partner_obj.get_from_id_or_create(data)
+                membership_data.append(
+                    {'partner_id': partner.id, 'role': 'maintainer'})
+            team.membership_ids = [
+                (2, x.id, False) for x in team.membership_ids]
+            team.membership_ids = [(0, False, x) for x in membership_data]

@@ -34,7 +34,8 @@ _GITHUB_TYPE_URL = {
     'organization_members': {'url': 'orgs/%s/members'},
     'organization_repositories': {'url': 'orgs/%s/repos'},
     'organization_teams': {'url': 'orgs/%s/teams'},
-    'team_members': {'url': 'teams/%s/members'},
+    'team_members_member': {'url': 'teams/%s/members?role=member'},
+    'team_members_maintainer': {'url': 'teams/%s/members?role=maintainer'},
     'repository_branches': {'url': 'repos/%s/branches'},
 }
 
@@ -75,13 +76,11 @@ class Github(object):
 
         if response.status_code == 401:
             raise exceptions.Warning(
-                _("Github Access Error"),
                 _("Unable to authenticate to Github with the login '%s'.\n"
                     "You should Check your credentials in the Odoo"
                     " configuration file.") % (self.login))
         elif response.status_code != 200:
             raise exceptions.Warning(
-                _("Github Error"),
                 _("The call to '%s' failed:\n"
                     "- Status Code: %d\n"
                     "- Reason: %s") % (
@@ -99,7 +98,6 @@ class Github(object):
             url = _GITHUB_TYPE_URL[self.github_type]['url']
         if self.github_type not in _GITHUB_TYPE_URL.keys():
             raise exceptions.Warning(
-                _("Unimplemented Connection"),
                 _("'%s' is not implemented.") % (self.github_type))
         complete_url = _BASE_URL + url % tuple(arguments)
 
