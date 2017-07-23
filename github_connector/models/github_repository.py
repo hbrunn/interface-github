@@ -42,20 +42,39 @@ class GithubRepository(models.Model):
         string='Branches Quantity', compute='_compute_repository_branch_qty',
         store=True)
 
-    team_ids = fields.Many2many(
-        string='Teams', comodel_name='github.team',
+    team_ids = fields.One2many(
+        string='Teams', comodel_name='github.team.repository',
         inverse_name='repository_id', readonly=True)
 
     team_qty = fields.Integer(
         string='Teams Quantity', compute='_compute_team_qty',
         store=True)
+# store=True,
+    is_ignored = fields.Boolean(
+        string='Is Ignored', compute='_compute_ignore', multi='ignore',
+        help="If checked, the branches will not be synchronized, and the"
+        " code source so will not be downloaded and analyzed. To ignore"
+        " a repository, go to it organization and fill the file"
+        " 'Ignored Repositories'.")
+
+    color = fields.Integer(
+        string='Color Index', multi='ignore', compute='_compute_ignore')
 
     # Compute Section
+    @api.multi
+    @api.depends('organization_id.ignored_repository_names')
+    def _compute_ignore(self):
+        for repository in self:
+            ignored_txt = repository.organization_id.ignored_repository_names
+            repository.is_ignored =\
+                ignored_txt and repository.name in ignored_txt.split("\n")
+            repository.color = repository.is_ignored and 1 or 0
+
     @api.multi
     @api.depends('team_ids')
     def _compute_team_qty(self):
         for repository in self:
-            repository.team_qty = len(partner.team_ids)
+            repository.team_qty = len(repository.team_ids)
 
     @api.multi
     @api.depends('name', 'organization_id.github_login')

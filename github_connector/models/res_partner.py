@@ -21,12 +21,12 @@ class ResPartner(models.Model):
         string='Is Bot Github Account', help="Check this box if this"
         "account is a bot, or something similar.")
 
-    github_membership_ids = fields.Many2many(
-        string='Teams', comodel_name='github.team.membership',
+    github_team_ids = fields.Many2many(
+        string='Teams', comodel_name='github.team.partner',
         inverse_name='partner_id', readonly=True)
 
-    github_membership_qty = fields.Integer(
-        string='Teams Quantity', compute='_compute_github_membership_qty',
+    github_team_qty = fields.Integer(
+        string='Teams Quantity', compute='_compute_github_team_qty',
         store=True)
 
     organization_ids = fields.Many2many(
@@ -63,10 +63,10 @@ class ResPartner(models.Model):
             partner.organization_qty = len(partner.organization_ids)
 
     @api.multi
-    @api.depends('github_membership_ids')
-    def _compute_github_membership_qty(self):
+    @api.depends('github_team_ids')
+    def _compute_github_team_qty(self):
         for partner in self:
-            partner.github_membership_qty = len(partner.github_membership_ids)
+            partner.github_team_qty = len(partner.github_team_ids)
 
     # Custom Section
     @api.model

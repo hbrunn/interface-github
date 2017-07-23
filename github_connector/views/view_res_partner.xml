@@ -16,7 +16,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
             <field name="name" position="after">
                 <field name="github_login" string="Github Login" filter_domain="[('github_login','ilike', self)]"/>
                 <field name="organization_ids"/>
-                <field name="github_membership_ids"/>
+                <field name="github_team_ids"/>
             </field>
         </field>
     </record>
@@ -44,7 +44,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="arch" type="xml">
             <field name="display_name" position="after">
                 <field name="github_login" />
-                <field name="github_membership_qty" />
+                <field name="github_team_qty" />
             </field>
         </field>
     </record>
@@ -56,13 +56,13 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
             <div name="button_box" position="inside">
                 <button type="action" class="oe_stat_button" icon="fa-institution" name="%(action_github_organization)d"
                         attrs="{'invisible': ['|', ('github_login', '=', False), ('is_company', '=', True)]}"
-                        context="{'search_default_member_ids': active_id}">
+                        context="{'search_default_team_ids': active_id}">
                     <field name="organization_qty" string="Organizations" widget="statinfo" />
                 </button>
-                <button type="action" class="oe_stat_button" icon="fa-users" name="%(action_github_team_membership_from_partner)d"
+                <button type="action" class="oe_stat_button" icon="fa-users" name="%(action_github_team_partner_from_partner)d"
                         attrs="{'invisible': ['|', ('github_login', '=', False), ('is_company', '=', True)]}"
                         context="{'search_default_partner_id': active_id}">
-                    <field name="github_membership_qty" string="Teams" widget="statinfo" />
+                    <field name="github_team_qty" string="Teams" widget="statinfo" />
                 </button>
             </div>
 

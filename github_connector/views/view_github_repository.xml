@@ -61,6 +61,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                     </div>
                     <group col="4">
                         <field name="organization_id"/>
+                        <field name="is_ignored"/>
                         <field name="website" widget="url"/>
                     </group>
                     <notebook>
@@ -91,25 +92,32 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="arch" type="xml">
             <kanban>
                 <field name="name"/>
+                <field name="color"/>
                 <field name="description"/>
                 <field name="organization_id"/>
+                <field name="is_ignored"/>
                 <field name="website"/>
                 <field name="repository_branch_qty" />
                 <templates>
                     <t t-name="kanban-box">
-                    <div class="oe_module_vignette oe_kanban_global_click">
-                        <div class="oe_module_desc">
-                            <h3><field name="name"/></h3>
-                                <t t-if="record.description.raw_value">
-                                    <h4>- <field name="description"/></h4>
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click">
+                            <div class="oe_module_desc">
+                                <h3><field name="name"/></h3>
+                                    <t t-if="record.description.raw_value">
+                                        <h4><field name="description"/></h4>
+                                    </t>
+                                <p class="oe_module_name">
+                                    <field name="organization_id"/><br/>
+                                    <t t-if="record.website.raw_value"><field name="website"/></t><br/>
+                                </p>
+                                <span class="badge">
+                                    <i class="fa fa-fw fa-code-fork"/><t t-esc="record.repository_branch_qty.value"/>
+                                </span>
+                                <t t-if="record.is_ignored.raw_value">
+                                    <span class="badge"><i class="fa fa-fw fa-ban"/></span>
                                 </t>
-                            <p class="oe_module_name">
-                                <field name="organization_id"/><br/>
-                                <t t-if="record.website.raw_value"><field name="website"/></t><br/>
-                            </p>
-                            <span class="badge"><i class="fa fa-fw fa-code-fork"/><t t-esc="record.repository_branch_qty.value"/></span>
+                            </div>
                         </div>
-                    </div>
                     </t>
               </templates>
             </kanban>

@@ -81,14 +81,19 @@ main branches (releases).
 
 .. image:: /github_connector/static/description/github_organization_sync_buttons.png
 
-* You can synchronize memberships teams. Go to 'Teams' / tree view / 'Actions'
+* You can synchronize members teams. Go to 'Teams' / tree view / 'Actions'
   'Update from Github'.
 
 .. image:: /github_connector/static/description/github_team_kanban.png
 
 In each team, you can see the members list and the role of the members
 
-.. image:: /github_connector/static/description/github_team_membership_kanban.png
+.. image:: /github_connector/static/description/github_team_partner_kanban.png
+
+In each team, you can see the repositories list but not the permissions of the
+team. (See 'Known I'ssues Section)
+
+.. image:: /github_connector/static/description/github_team_repository_kanban.png
 
 * You can synchronize the branches of your repositories. Go to 'Repositories' /
   tree view / 'Actions' / 'Update from Github'
@@ -145,16 +150,35 @@ This module provides 4 crons that you can enable:
 Roadmap / Known Issues
 ======================
 
-* For the time being, Github API doesn't provide parent team / child team
-  information.
+* For the time being, Github API doesn't provide some informations that are
+  available by the classic UI, that includes:
 
-Possible improvements :
+1. team hierarchy: the field is present in the model github_team.parent_id,
+   but unused.
+2. permission of team on repositories: the field is so present in the model
+   github_team_repository.permission, but set to 'undefined' for the time
+   being.
 
-* Create a new module github_connector_website, that could display
-  teams / repositories / branches informations for non logged users.
+* Possible improvements:
 
-* Analyse commits. (author, quantity by milestones, etc...)
-  this feature has been partially implemented in a V8.0 
+1. Create a new module github_connector_website, that could display
+   teams / repositories / branches informations for non logged users.
+
+2. Analyse commits. (author, quantity by milestones, etc...)
+   this feature has been partially implemented in a V8.0 PR.
+
+3. Synchronize Pull Request, Issues, Comments.
+   this feature has been partially implemented in a V8.0 PR.
+
+* Refactor the github connector:
+
+A python librairy is available named, PyGitHub. It could be interesting
+to use it, instead of using custom code. However, this lib doesn't provides
+good access to child object, that generates for the time being, unecessary
+api calls. For exemple, updating a repository should call before a call to
+the parent organization. (The current module is so faster)
+
+``sudo pip install PyGitHub``
 
 Credits
 =======

@@ -22,12 +22,15 @@ class GithubTeam(models.Model):
     name = fields.Char(
         string='Name', index=True, required=True, readonly=True)
 
-    membership_ids = fields.One2many(
-        string='Members', comodel_name='github.team.membership',
+    parent_id = fields.Many2one(
+        string='Parent Team', readonly=True, comodel_name='github.team')
+
+    partner_ids = fields.One2many(
+        string='Members', comodel_name='github.team.partner',
         inverse_name='team_id', readonly=True)
 
-    membership_qty = fields.Integer(
-        string='Members Quantity', compute='_compute_membership_qty',
+    partner_qty = fields.Integer(
+        string='Members Quantity', compute='_compute_partner_qty',
         store=True)
 
     repository_ids = fields.One2many(
@@ -65,10 +68,10 @@ class GithubTeam(models.Model):
                 team.organization_id.github_login + '/' + team.github_login
 
     @api.multi
-    @api.depends('membership_ids')
-    def _compute_membership_qty(self):
+    @api.depends('partner_ids')
+    def _compute_partner_qty(self):
         for team in self:
-            team.membership_qty = len(team.membership_ids)
+            team.partner_qty = len(team.partner_ids)
 
     @api.multi
     @api.depends('repository_ids')
@@ -88,6 +91,7 @@ class GithubTeam(models.Model):
     @api.multi
     def full_update(self):
         self.button_sync_member()
+        self.button_sync_repository()
 
     # Action Section
     @api.multi
@@ -96,15 +100,30 @@ class GithubTeam(models.Model):
         connector_member = self.get_github_for('team_members_member')
         connector_maintainer = self.get_github_for('team_members_maintainer')
         for team in self:
-            membership_data = []
+            partner_data = []
             for data in connector_member.list([team.github_id_external]):
                 partner = partner_obj.get_from_id_or_create(data)
-                membership_data.append(
-                    {'partner_id': partner.id, 'role': 'member'})
+                partner_data.append({
+                    'partner_id': partner.id, 'role': 'member'})
             for data in connector_maintainer.list([team.github_id_external]):
                 partner = partner_obj.get_from_id_or_create(data)
-                membership_data.append(
-                    {'partner_id': partner.id, 'role': 'maintainer'})
-            team.membership_ids = [
-                (2, x.id, False) for x in team.membership_ids]
-            team.membership_ids = [(0, False, x) for x in membership_data]
+                partner_data.append({
+                    'partner_id': partner.id, 'role': 'maintainer'})
+            team.partner_ids = [
+                (2, x.id, False) for x in team.partner_ids]
+            team.partner_ids = [(0, False, x) for x in partner_data]
+
+    @api.multi
+    def button_sync_repository(self):
+        repository_obj = self.env['github.repository']
+        connector = self.get_github_for('team_repositories')
+        for team in self:
+            repository_data = []
+            for data in connector.list([team.github_id_external]):
+                repository = repository_obj.get_from_id_or_create(data)
+                repository_data.append({
+                    'repository_id': repository.id, 'permission': 'undefined'})
+
+            team.repository_ids = [
+                (2, x.id, False) for x in team.repository_ids]
+            team.repository_ids = [(0, False, x) for x in repository_data]

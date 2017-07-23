@@ -14,6 +14,7 @@
         ', Sylvain LE GAL',
     'depends': [
         'base',
+        'web_kanban',
     ],
     'data': [
         'security/ir_model_category.xml',
@@ -25,6 +26,8 @@
         'views/view_wizard_update_from_github.xml',
         'views/view_wizard_update_branch_list.xml',
         'views/view_reporting.xml',
+        'views/view_github_team_partner.xml',
+        'views/view_github_team_repository.xml',
         'views/action.xml',
         'views/view_res_partner.xml',
         'views/view_github_organization.xml',
@@ -32,8 +35,6 @@
         'views/view_github_repository.xml',
         'views/view_github_repository_branch.xml',
         'views/view_github_team.xml',
-        'views/view_github_team_membership.xml',
-        'views/view_github_team_repository.xml',
         'views/menu.xml',
     ],
     'demo': [

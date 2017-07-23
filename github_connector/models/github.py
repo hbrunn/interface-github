@@ -36,6 +36,7 @@ _GITHUB_TYPE_URL = {
     'organization_teams': {'url': 'orgs/%s/teams'},
     'team_members_member': {'url': 'teams/%s/members?role=member'},
     'team_members_maintainer': {'url': 'teams/%s/members?role=maintainer'},
+    'team_repositories': {'url': 'teams/%s/repos'},
     'repository_branches': {'url': 'repos/%s/branches'},
 }
 

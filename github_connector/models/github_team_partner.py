@@ -6,8 +6,8 @@
 from openerp import fields, models
 
 
-class GithubTeamMembership(models.Model):
-    _name = 'github.team.membership'
+class GithubTeamPartner(models.Model):
+    _name = 'github.team.partner'
     _order = 'team_id, partner_id'
 
     _ROLE_SELECTION = [

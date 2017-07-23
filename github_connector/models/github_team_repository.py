@@ -11,6 +11,7 @@ class GithubTeamRepository(models.Model):
     _order = 'team_id, repository_id'
 
     _PERMISSION_SELECTION = [
+        ('undefined', 'Undefined'),
         ('read', 'Read'),
         ('write', 'Write'),
         ('admin', 'Admin'),
