@@ -30,6 +30,14 @@ class GithubTeam(models.Model):
         string='Members Quantity', compute='_compute_membership_qty',
         store=True)
 
+    repository_ids = fields.One2many(
+        string='Repositories', comodel_name='github.team.repository',
+        inverse_name='team_id', readonly=True)
+
+    repository_qty = fields.Integer(
+        string='Repositories Quantity', compute='_compute_repository_qty',
+        store=True)
+
     description = fields.Char(string='Description', readonly=True)
 
     complete_name = fields.Char(
@@ -61,6 +69,12 @@ class GithubTeam(models.Model):
     def _compute_membership_qty(self):
         for team in self:
             team.membership_qty = len(team.membership_ids)
+
+    @api.multi
+    @api.depends('repository_ids')
+    def _compute_repository_qty(self):
+        for team in self:
+            team.repository_qty = len(team.repository_ids)
 
     # Overloadable Section
     def get_odoo_data_from_github(self, data):

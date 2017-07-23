@@ -42,7 +42,21 @@ class GithubRepository(models.Model):
         string='Branches Quantity', compute='_compute_repository_branch_qty',
         store=True)
 
+    team_ids = fields.Many2many(
+        string='Teams', comodel_name='github.team',
+        inverse_name='repository_id', readonly=True)
+
+    team_qty = fields.Integer(
+        string='Teams Quantity', compute='_compute_team_qty',
+        store=True)
+
     # Compute Section
+    @api.multi
+    @api.depends('team_ids')
+    def _compute_team_qty(self):
+        for repository in self:
+            repository.team_qty = len(partner.team_ids)
+
     @api.multi
     @api.depends('name', 'organization_id.github_login')
     def _compute_complete_name(self):

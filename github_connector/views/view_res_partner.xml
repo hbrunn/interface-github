@@ -49,7 +49,6 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         </field>
     </record>
 
-    <!-- TODO Add a button to let possible to set github_login on existing partner-->
     <record id="view_res_partner_form" model="ir.ui.view">
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
@@ -60,7 +59,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                         context="{'search_default_member_ids': active_id}">
                     <field name="organization_qty" string="Organizations" widget="statinfo" />
                 </button>
-                <button type="action" class="oe_stat_button" icon="fa-users" name="%(action_github_team_membership)d"
+                <button type="action" class="oe_stat_button" icon="fa-users" name="%(action_github_team_membership_from_partner)d"
                         attrs="{'invisible': ['|', ('github_login', '=', False), ('is_company', '=', True)]}"
                         context="{'search_default_partner_id': active_id}">
                     <field name="github_membership_qty" string="Teams" widget="statinfo" />

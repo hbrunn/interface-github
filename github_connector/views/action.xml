@@ -32,8 +32,8 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="view_mode">kanban,tree,form</field>
     </record>
 
-    <record id="action_github_team_membership" model="ir.actions.act_window">
-        <field name="name">Memberships</field>
+    <record id="action_github_team_membership_from_partner" model="ir.actions.act_window">
+        <field name="name">Teams</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">github.team.membership</field>
         <field name="view_type">form</field>
@@ -41,9 +41,25 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
     </record>
 
     <record id="action_github_team_membership_from_team" model="ir.actions.act_window">
-        <field name="name">Memberships</field>
+        <field name="name">Members</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">github.team.membership</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+    <record id="action_github_team_repository_from_repository" model="ir.actions.act_window">
+        <field name="name">Team</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">github.team.repository</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <record id="action_github_team_repository_from_team" model="ir.actions.act_window">
+        <field name="name">Repositories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">github.team.repository</field>
         <field name="view_type">form</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>

@@ -12,6 +12,7 @@ from . import github_repository
 from . import github_repository_branch
 from . import github_team
 from . import github_team_membership
+from . import github_team_repository
 
 from . import wizard_load_github_model
 from . import wizard_download_analyze_branch

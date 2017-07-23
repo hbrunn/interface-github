@@ -33,6 +33,7 @@
         'views/view_github_repository_branch.xml',
         'views/view_github_team.xml',
         'views/view_github_team_membership.xml',
+        'views/view_github_team_repository.xml',
         'views/menu.xml',
     ],
     'demo': [
