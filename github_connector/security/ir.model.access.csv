@@ -11,3 +11,5 @@ access_github_team_reader,github_team reader,model_github_team,,1,0,0,0
 access_github_team_manager,github_team manager,model_github_team,github_connector.group_github_connector_manager,1,1,1,1
 access_github_team_partner_reader,github_team partner reader,model_github_team_partner,,1,0,0,0
 access_github_team_partner_manager,github_team partner manager,model_github_team_partner,github_connector.group_github_connector_manager,1,1,1,1
+access_github_team_repository_reader,github_team repository reader,model_github_team_repository,,1,0,0,0
+access_github_team_repository_manager,github_team repository manager,model_github_team_repository,github_connector.group_github_connector_manager,1,1,1,1
