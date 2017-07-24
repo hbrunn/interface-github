@@ -126,10 +126,12 @@ class GithubRepository(models.Model):
                 .mapped('name')
 
             for data in github_branch.list([repository.github_login]):
-                # We don't use get_from_id_or_create because repository
-                # branches does not have any ids. (very basic object in the
-                # Github API)
-                if data['name'] in correct_milestones:
+                if repository.is_ignored:
+                    pass
+                elif data['name'] in correct_milestones:
+                    # We don't use get_from_id_or_create because repository
+                    # branches does not have any ids. (very basic object in the
+                    # Github API)
                     branch = branch_obj.create_or_update_from_name(
                         repository.id, data['name'])
                     branch_ids.append(branch.id)

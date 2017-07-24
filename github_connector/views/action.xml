@@ -147,7 +147,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">github.repository.branch</field>
         <field name="view_type">form</field>
-        <field name="view_mode">graph</field>
+        <field name="view_mode">graph,pivot</field>
         <field name="context">{'search_default_group_by_organization_milestone_id': True}</field>
         <field name="view_id" ref="view_github_branch_by_milestone_graph" />
     </record>
@@ -157,7 +157,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">github.repository.branch</field>
         <field name="view_type">form</field>
-        <field name="view_mode">graph</field>
+        <field name="view_mode">graph,pivot</field>
         <field name="context">{'search_default_group_by_organization_milestone_id': True}</field>
         <field name="view_id" ref="view_github_size_by_milestone_graph" />
     </record>
